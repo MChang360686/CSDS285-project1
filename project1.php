@@ -6,6 +6,15 @@
                 <h1>Webscraper</h1>
 
                 <h4>Enter item to scrape for</h4>
+ 		    <!--Help Popup code-->
+                <div class="popup" style="margin-left: 15px font-family: Arial" onclick="hePop()">Click here for Help
+                		<span class="popuptext" id="helpPopup">
+                                <p style="text-align:left margin-left: 15px">How to use this application</p>
+                                <p style="text-align:left margin-left: 15px">1. Enter name of item you wish to purchase from Ebay into input</p>
+                                <p style="text-align:left margin-left: 15px">2. Wait</p>
+                        </span>
+                </div>
+
                 <form method="post">
                         <input type="text" name="inputbox" placeholder="Enter Item">
                         <input type="submit" class="button" name="submitbutton" value="Enter">
@@ -58,5 +67,12 @@
 						$page_num++;
 					}
                 ?>
+	  <!--JS goes here-->
+        <script>
+                function hePop() {
+                        var popup = document.getElementById("helpPopup");
+                        popup.classList.toggle("show");
+                }
+        </script>
         </body>
 </html>
