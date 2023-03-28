@@ -24,6 +24,7 @@ foreach ($location_lookups_data as $location_lookup){
     $basePostingId = $pulled_location_data->data->decode->minPostingId;
     $pulled_items = $pulled_location_data->data->items;
     $max_items_count = 100;
+    # Note: If we were being perfect, then we would not cut off extras up front like we are currently here, as this may also lose some items in removing duplicates later. Optimally, we would pull new items over as needed to meet a target count.
     $pulled_items = array_slice($pulled_items, 0, $max_items_count);
 
     foreach ($pulled_items as $item_pulled_data){
@@ -32,6 +33,7 @@ foreach ($location_lookups_data as $location_lookup){
         // TODO REFACTOR SPLIT INTO FUNCS:
 
         $post_id = $item_pulled_data[0] + $basePostingId;
+        //$item_data->post_id = $post_id;
         $post_url_name = NULL;
         foreach ($item_pulled_data as $item_field){
             if (is_array($item_field) && $item_field[0] == 6){
@@ -46,6 +48,7 @@ foreach ($location_lookups_data as $location_lookup){
 
         $item_data->state = "TODO - BEN'S WORKING ON THIS";
 
+        # Note that price may be -1, which means a price is not given.
         $item_data->price = $item_pulled_data[3];
 
         $location_pulled_str = $item_pulled_data[4];
@@ -55,7 +58,23 @@ foreach ($location_lookups_data as $location_lookup){
 
         $item_data->title = $item_pulled_data[count($item_pulled_data) - 1];
 
-        array_push($locations_data, $item_data);
+        $is_already_added = false;
+        foreach ($locations_data as $location_item){
+            # TODO REFACTOR MAKE A SINGLE FIELD FOR DUPE CHECKING.
+            # Note: The reason we check duplicates by Title and Location rather than an ID is because we noticed that Craigslist itself has a problem with duplicate posts that are clearly of the exact same real world item.
+            if (
+                $item_data->title == $location_item->title &&
+                $item_data->lat == $location_item->lat &&
+                $item_data->lon == $location_item->lon
+            ){
+                $is_already_added = true;
+                break;
+            }
+        }
+
+        if (!$is_already_added){
+            array_push($locations_data, $item_data);
+        }
     }
 }
 
