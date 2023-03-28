@@ -1,0 +1,3 @@
+
+# Ignore the "stored data" data generated automatically by the program:
+backend/stored-data/
