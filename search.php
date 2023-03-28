@@ -30,7 +30,7 @@
                 }
             });
 
-            $("#searchSubmitButton").click();
+            $("#searchSubmitButton").click(submitSearch);
 
             function submitSearch(e) {
                 const searchText = $("#searchInput").val();
