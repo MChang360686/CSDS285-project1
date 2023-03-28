@@ -2,9 +2,12 @@
 
 // Each location stored as [lat,lon]:
 //$locations = [[46.86765753623418,-120.7675575752153]];
-$locations = [[43.8533,-120.9266]];
+$locations = [
+    [43.8533,-120.9266], # Washington
+    [46.767, -113.973], # West Montana
+]; 
 
-$locations_data = [];
+$location_lookups_data = [];
 
 foreach ($locations as $location){
     $lat = $location[0];
@@ -26,14 +29,15 @@ foreach ($locations as $location){
     $searchPath = str_replace(' ', '-', strtolower($city)) . '-' . strtolower($state);
     $search_lat = round($lat, 4);
     $search_lon = round($lon, 4);
-    $location_data = new stdClass();
+
+    $location_lookup = new stdClass();
     # Note that the API URL expects an encoded forward slash, which is %2F, however we also want to format this string later, so we use a '%%' here to escape the '%' literal:
-    $location_data->url_part_1 = 'https://sapi.craigslist.org/web/v8/postings/search/full?batch=' . $areaId . '-0-360-0-0&cc=US&lang=en&lat=' . $search_lat . '&lon=' . $search_lon . '&query=';
-    $location_data->url_part_2 = '&searchPath=' . $searchPath . '%%2Fsss&search_distance=250';
-    array_push($locations_data, $location_data);
+    $location_lookup->url_part_1 = 'https://sapi.craigslist.org/web/v8/postings/search/full?batch=' . $areaId . '-0-360-0-0&cc=US&lang=en&lat=' . $search_lat . '&lon=' . $search_lon . '&query=';
+    $location_lookup->url_part_2 = '&searchPath=' . $searchPath . '%%2Fsss&search_distance=250';
+    array_push($location_lookups_data, $location_lookup);
 }
 
 // Output to file so that we can persist the scraped info:
-file_put_contents('stored-data/locations.json', json_encode($locations_data));
+file_put_contents('stored-data/locations.json', json_encode($location_lookups_data));
 
 ?>
