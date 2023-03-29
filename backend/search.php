@@ -2,6 +2,9 @@
 
 $location_lookups_data = json_decode(file_get_contents('stored-data/locations.json'));
 
+# Reads Category ID to Abbreviation map: (from https://stackoverflow.com/a/5164417)
+$category_id_to_abbreviation_map = json_decode(file_get_contents('category-id-to-abbreviation.json'), true);
+
 $search_query_text = $_GET['q'];
 
 $locations_data = [];
@@ -27,6 +30,8 @@ foreach ($location_lookups_data as $location_lookup){
     # Note: If we were being perfect, then we would not cut off extras up front like we are currently here, as this may also lose some items in removing duplicates later. Optimally, we would pull new items over as needed to meet a target count.
     $pulled_items = array_slice($pulled_items, 0, $max_items_count);
 
+    $locations_decode_map = $pulled_location_data->data->decode->locations;
+
     foreach ($pulled_items as $item_pulled_data){
         $item_data = new stdClass();
 
@@ -42,8 +47,29 @@ foreach ($location_lookups_data as $location_lookup){
             }
         }
 
+        $location_pulled_str = $item_pulled_data[4];
+        $location_pulled_split = explode('~', $location_pulled_str);
+
+
         if (!is_null($post_url_name)){
-            $item_data->url = "TODO - BEN'S WORKING ON THIS";
+            $category_id = $item_pulled_data[2];
+            $category_abbreviation = $category_id_to_abbreviation_map[strval($category_id)];
+
+            $location_pulled_split2 = explode(':', $location_pulled_split[0]);
+            $location_decode_id = $location_pulled_split2[0];
+//             echo $location_pulled_str . '||';
+//             echo $location_decode_id;
+            //echo '    ';
+            #echo $locations_decode_map[$location_decode_id];
+            $location_decode_obj = array_values($locations_decode_map[$location_decode_id]);
+            $location_name = $location_decode_obj[1];
+            $url_secondary_location_insert = '';
+            if (count($location_decode_obj) > 2){
+                $location_secondary_code = $locations_decode_map[$location_decode_id][2];
+                $url_secondary_location_insert = $location_secondary_code . '/';
+            }
+
+            $item_data->url = 'https://' . $location_name . '.craigslist.org/' . $url_secondary_location_insert . $category_abbreviation . '/d/' . $post_url_name . '/' . $post_id . '.html';
         }
 
         $item_data->state = "TODO - BEN'S WORKING ON THIS";
@@ -51,8 +77,6 @@ foreach ($location_lookups_data as $location_lookup){
         # Note that price may be -1, which means a price is not given.
         $item_data->price = $item_pulled_data[3];
 
-        $location_pulled_str = $item_pulled_data[4];
-        $location_pulled_split = explode('~', $location_pulled_str);
         $item_data->lat = floatval($location_pulled_split[1]);
         $item_data->lon = floatval($location_pulled_split[2]);
 
