@@ -3,6 +3,7 @@
 <html>
     <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> <!-- JQuery -->
+    <link rel="stylesheet" href="style.css" type="text/css">
     </head>
     <body>
         <h1>Search all US Craigslist Postings</h1>
@@ -21,29 +22,14 @@
             <input id="searchInput" type="text" placeholder="Enter Item">
             <button id="searchSubmitButton">Search</button>
         </div>
+		
+	  <br>
+	  
+	  <div id="map"></div>
 
         <!--JS goes here-->
-        <script>
-            $("#searchInput").keyup(function(e) {
-                if(e.key === "Enter"){
-                    submitSearch();
-                }
-            });
-
-            $("#searchSubmitButton").click(submitSearch);
-
-            function submitSearch(e) {
-                const searchText = $("#searchInput").val();
-                console.log("Submitted search:", searchText);
-                $.post("backend/search.php?q=" + searchText, function(data, status) {
-                    console.log("Result:", data, status);
-                });
-            }
-
-            function hePop() {
-                var popup = document.getElementById("helpPopup");
-                popup.classList.toggle("show");
-            }
-        </script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC35EMzaJEToK-ZyOZ1SkBa1yKegKAfb8o&callback=initMap"></script>
+		<script src="./script.js"></script>
+		
     </body>
 </html>
