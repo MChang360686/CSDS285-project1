@@ -5,7 +5,31 @@
 $locations = [
     [43.8533,-120.9266], # Washington
     [46.767, -113.973], # West Montana
-]; 
+    [45.907, -108.653], # East Montana
+    [46.266, -100.254], # North and South Dakota
+    [45.557, -92.673], # Minnesota and Wisconsin
+    [41.949, -84.901], # Michigan, Indiana, Ohio
+    [40.232, -77.2], # New York to Virginia
+    [44.087, -71.987], # New York to Maine
+    [38.289, -119.07], # Above LA and most of Nevada
+    [40.261, -112.583], # Nevada Idaho Utah
+    [42.717, -107.946], # Wyoming
+    [42.067, -100.148], # South Datota and Nebraska
+    [41.086, -92.53], # Iowa Missouri Illinois
+    [36.009, -83.99], # Kentucky Tennessee Georgia
+    [33.982,-81.237], # North Carolina to Georgia
+    [34.687, -115.874], # SoCal
+    [34.426, -110.911], # Arizona
+    [36.841, -107.695], # Four Corners
+    [36.751, -102.623], # Colorado, Kansas, Texas
+    [36.514, -97.372], # Kansas and Oklahoma
+    [36.449, -91.047], # Missouri, Arkansas, West Tennessee
+    [32.477, -89.323], # Arkansas, Louisiana, to Alabama
+    [28.2, -82.769], # Florida
+    [32.638, -103.439], # New Mexico
+    [32.397, -101.64], # West Texas
+    [29.774, -96.185] # South East Texas
+];
 
 $location_lookups_data = [];
 
