@@ -29,7 +29,50 @@
 
         <!--JS goes here-->
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC35EMzaJEToK-ZyOZ1SkBa1yKegKAfb8o&callback=initMap"></script>
-		<script src="./script.js"></script>
+		<script>
+		
+		let global_map;
+
+		$("#searchInput").keyup(function(e) {
+			if(e.key === "Enter"){
+				submitSearch();
+			}
+		});
+		$("#searchSubmitButton").click(submitSearch);
+		function submitSearch(e) {
+			const searchText = $("#searchInput").val();
+			console.log("Submitted search:", searchText);
+			$.post("backend/search.php?q=" + searchText, function(data, status) {
+				console.log("Result:", data, status);
+				for (let item in data) {
+					addMarker({lat: parseFloat(data[item].lat), lng: parseFloat(data[item].lon)}, data[item].price, data[item].title, data[item].url);
+				}
+			});
+		}
+		function hePop() {
+			var popup = document.getElementById("helpPopup");
+			popup.classList.toggle("show");
+		}
+
+		function initMap() {
+		  global_map = new google.maps.Map(
+			document.getElementById('map'), {zoom: 4, center: {lat: 41.36444, lng: -98.31665}}
+		  );
+		}
+
+		function addMarker(coords, price, title, url){
+		  let marker = new google.maps.Marker({position: coords, map: global_map});
+		  console.log("marker url:" + url);
+		  let infoWindow = new google.maps.InfoWindow({
+			  content: `<h3>${title}: ${price}$</h3> \n <a href=${url}>view listing<a>`
+		  });
+		  
+		  marker.addListener('click', function(){
+			 infoWindow.open(map, marker); 
+		  });
+		  
+		}
+		</script>
 		
     </body>
 </html>
