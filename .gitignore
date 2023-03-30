@@ -2,3 +2,6 @@
 # Ignore the "generated data" folder, 
 #  which contains data generated automatically by the program:
 backend/generated-data/
+
+# Ignore the config file:
+config.ini
