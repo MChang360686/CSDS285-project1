@@ -1,3 +1,4 @@
 
-# Ignore the "stored data" data generated automatically by the program:
-backend/stored-data/
+# Ignore the "generated data" folder, 
+#  which contains data generated automatically by the program:
+backend/generated-data/

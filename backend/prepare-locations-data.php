@@ -1,5 +1,9 @@
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Each location stored as [lat,lon]:
 //$locations = [[46.86765753623418,-120.7675575752153]];
 $locations = [
@@ -31,7 +35,7 @@ $locations = [
     [29.774, -96.185] # South East Texas
 ];
 
-$location_lookups_data = [];
+$search_urls_file_txt = '';
 
 foreach ($locations as $location){
     $lat = $location[0];
@@ -54,14 +58,16 @@ foreach ($locations as $location){
     $search_lat = round($lat, 4);
     $search_lon = round($lon, 4);
 
-    $location_lookup = new stdClass();
-    # Note that the API URL expects an encoded forward slash, which is %2F, however we also want to format this string later, so we use a '%%' here to escape the '%' literal:
-    $location_lookup->url_part_1 = 'https://sapi.craigslist.org/web/v8/postings/search/full?batch=' . $areaId . '-0-360-0-0&cc=US&lang=en&lat=' . $search_lat . '&lon=' . $search_lon . '&query=';
-    $location_lookup->url_part_2 = '&searchPath=' . $searchPath . '%%2Fsss&search_distance=250';
-    array_push($location_lookups_data, $location_lookup);
+    $url_format = 'https://sapi.craigslist.org/web/v8/postings/search/full?batch=' . $areaId . '-0-360-0-0&cc=US&lang=en&lat=' . $search_lat . '&lon=' . $search_lon . '&query={}&searchPath=' . $searchPath . '%2Fsss&search_distance=250';
+    $search_urls_file_txt .= $url_format . "\n";
+}
+
+// Make the generated-data directory if it doesn't already exist:
+if (!file_exists('generated-data')) {
+    mkdir('generated-data', 0777, true);
 }
 
 // Output to file so that we can persist the scraped info:
-file_put_contents('stored-data/locations.json', json_encode($location_lookups_data));
+file_put_contents('generated-data/search_urls.txt', $search_urls_file_txt);
 
 ?>

@@ -1,28 +1,32 @@
 <?php
 
-$location_lookups_data = json_decode(file_get_contents('stored-data/locations.json'));
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+$config_ini = parse_ini_file('../config.ini');
+
+$python_path = $config_ini['python_path'];
+// This null check is fuzzy, and will say invalid if empty or doesn't exist:
+if ($python_path == NULL) {
+    echo 'CONFIG IS INVALID - Fix your "config.ini" file.';
+    exit();
+}
 
 # Reads Category ID to Abbreviation map: (from https://stackoverflow.com/a/5164417)
 $category_id_to_abbreviation_map = json_decode(file_get_contents('category-id-to-abbreviation.json'), true);
 
 $search_query_text = $_GET['q'];
 
+$command = escapeshellcmd($python_path . ' search-ingest.py "' . rawurlencode($search_query_text) . '"');
+$output = shell_exec($command);
+
+$per_location_response = explode("|\n", $output);
+
 $locations_data = [];
 
-foreach ($location_lookups_data as $location_lookup){
-    # Construct the URL by inserting the query text between URL parts 1 and 2:
-    #   Note: this concatenation was done rather than string formatting to avoid pain from '%'s being valid in the search query.
-    $url = $location_lookup->url_part_1 . rawurlencode($search_query_text) . $location_lookup->url_part_2;
-    #echo $url;
-
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Host: sapi.craigslist.org', 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36']);
-    $pulled_json_str = curl_exec($ch);
-    curl_close($ch);
-
-    $pulled_location_data = json_decode($pulled_json_str);
+foreach ($per_location_response as $raw_location_response){
+    $pulled_location_data = json_decode($raw_location_response);
 
     $basePostingId = $pulled_location_data->data->decode->minPostingId;
     $pulled_items = $pulled_location_data->data->items;
