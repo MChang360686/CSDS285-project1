@@ -30,12 +30,17 @@
 		
 		let global_map;
 		let markersArray = [];
+		let lowestPrice = 99999999999;
+		let highestPrice = 0;
 		
 		function clearPins() {
-		  for (var i = 0; i < markersArray.length; i++ ) {
-			markersArray[i].setMap(null);
-		  }
-		  markersArray.length = 0;
+			lowestPrice = 99999999999;
+			highestPrice = 0;
+			
+			for (var i = 0; i < markersArray.length; i++ ) {
+				markersArray[i].setMap(null);
+			}
+			markersArray.length = 0;
 		}
 		
 		$("#searchInput").keyup(function(e) {
@@ -44,6 +49,7 @@
 			}
 		});
 		$("#searchSubmitButton").click(submitSearch);
+			
 		function submitSearch(e) {
 			clearPins();
 			const searchText = $("#searchInput").val();
@@ -52,6 +58,10 @@
 				console.log("Result:", data, status);
 				for (let item in data) {
 					addMarker({lat: parseFloat(data[item].lat), lng: parseFloat(data[item].lon)}, data[item].price, data[item].title, data[item].url);
+					
+					//for generating colors
+					if((data[item].price > 0) && (data[item].price < lowestPrice)) lowestPrice = data[item].price;
+					if(data[item].price > highestPrice) highestPrice = data[item].price;
 				}
 			});
 		}
@@ -63,18 +73,28 @@
 		  global_map = new google.maps.Map(
 			document.getElementById('map'), {zoom: 4, center: {lat: 41.36444, lng: -98.31665}}
 		  );
+		}	
+		
+		function generateColor(price){
+			let range = highestPrice-lowestPrice;
+			let interval = range/3;
+			
+			if(price < interval) return("http://maps.google.com/mapfiles/ms/icons/green-dot.png");
+			else if ((price > interval) && (price < interval * 2))  return("http://maps.google.com/mapfiles/ms/icons/yellow-dot.png");
+			else return("http://maps.google.com/mapfiles/ms/micons/red-dot.png");
 		}
+			
 		function addMarker(coords, price, title, url){
-		  let marker = new google.maps.Marker({position: coords, map: global_map});
-		  markersArray.push(marker);
-		  let infoWindow = new google.maps.InfoWindow({
+			let marker = new google.maps.Marker({position: coords, map: global_map, icon: {url: generateColor(price)} });
+			markersArray.push(marker);
+			let infoWindow = new google.maps.InfoWindow({
 			  content: `<h3>${title}: ${price}$</h3> \n <a href=${url}>view listing<a>`
-		  });
-		  
-		  marker.addListener('click', function(){
+			});
+
+			marker.addListener('click', function(){
 			 infoWindow.open(map, marker); 
-		  });
-		  
+			});
+
 		}
 		</script>
 		
