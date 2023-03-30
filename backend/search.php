@@ -23,7 +23,11 @@ foreach ($per_location_response as $raw_location_response){
 
     $basePostingId = $pulled_location_data->data->decode->minPostingId;
     $pulled_items = $pulled_location_data->data->items;
-    $max_items_count = 100;
+
+    # Set the maximum items for this location bubble:
+    #  (360 appears to be the maximum for the endpoint we're hitting.)
+    $max_items_count = 360;
+
     # Note: If we were being perfect, then we would not cut off extras up front like we are currently here, as this may also lose some items in removing duplicates later. Optimally, we would pull new items over as needed to meet a target count.
     $pulled_items = array_slice($pulled_items, 0, $max_items_count);
 
