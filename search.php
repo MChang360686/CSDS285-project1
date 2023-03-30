@@ -34,6 +34,7 @@
 		<div id="map"></div>
 	</div>
 	
+
 	 
         <!--JS goes here-->
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC35EMzaJEToK-ZyOZ1SkBa1yKegKAfb8o&callback=initMap"></script>
@@ -76,24 +77,45 @@
 			var popup = document.getElementById("helpPopup");
 			popup.classList.toggle("show");
 		}
+		
 		function initMap() {
 		  global_map = new google.maps.Map(
 			document.getElementById('map'), {zoom: 4, center: {lat: 41.36444, lng: -98.31665}}
 		  );
+		  
+		  addMarker({lat: 41.36444, lng: -98.31665}, 100, "placeholder", "placeholder", 'http://labs.google.com/ridefinder/images/mm_20_white.png');
 		}	
 		
+		let infoWindow;
+		let baseContent;
+		let content;
+		function showPins(){
+			let content = baseContent + `<img class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/red-pushpin.png"></img>
+				<img class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/ylw-pushpin.png"></img>
+				<img class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/grn-pushpin.png"></img>
+				<img class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/blue-pushpin.png"></img>
+				<img class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/ltblu-pushpin.png"></img>
+				<img class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/purple-pushpin.png"></img>              
+				<img class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/pink-pushpin.png"></img>`
+			infoWindow.setContent(content);
+		}
+		
 		function addMarker(coords, price, title, url, color){
-			let marker = new google.maps.Marker({position: coords, map: global_map, icon: {url: color} });
-			markersArray.push(marker);
-			let infoWindow = new google.maps.InfoWindow({
-			  content: `<h3>${title}: ${price}$</h3> \n <a href=${url}>view listing<a>`
-			});
+		  let marker = new google.maps.Marker({position: coords, map: global_map, icon: {url: color} });
+		  markersArray.push(marker);
+		  
+		baseContent = `<h3>${title}: ${price}$</h3> \n <a href=${url}>view listing<a>`;
+		let initPin = `<img onClick="showPins()" id="init-pin" class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/red-pushpin.png">`;
+		  
+		infoWindow = new google.maps.InfoWindow({ content: content });
 
-			marker.addListener('click', function(){
-			 infoWindow.open(map, marker); 
-			});
+		  marker.addListener('click', function(){
+			infoWindow.setContent(baseContent + initPin);
+			infoWindow.open(map, marker);
+		  });
 
 		}
+		
 		</script>
 		
     </body>
