@@ -45,7 +45,7 @@
 		
 		function clearPins() {
 			for (var i = 0; i < markersArray.length; i++ ) {
-				markersArray[i].setMap(null);
+				markersArray[i].pin.setMap(null);
 			}
 			markersArray.length = 0;
 		}
@@ -85,31 +85,41 @@
 			document.getElementById('map'), {zoom: 4, center: {lat: 41.36444, lng: -98.31665}}
 		  );
 		  
-		  addMarker({lat: 41.36444, lng: -98.31665}, 100, "placeholder", "placeholder", 'http://labs.google.com/ridefinder/images/mm_20_white.png');
+		  addMarker({lat: 41.36444, lng: -98.31665}, 100, "placeholder", "placeholder", 'http://labs.google.com/ridefinder/images/mm_20_white.png', 0);
 		}	
 		
 		let infoWindow;
+		let currentId;
+		function setPin(color){
+			for (var i = 0; i < markersArray.length; i++ ) {
+				if(markersArray[i].id == currentId){
+					markersArray[i].pin.setIcon(color);
+				}
+			}
+		}
+		
 		function showPins(){
-			let content = `<div id="pin-options-container">
-			  <img class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/red-pushpin.png"></img>
-			  <img class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/blue-pushpin.png"></img>              
-			  <img class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/ltblu-pushpin.png"></img>
-			  <img class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/pink-pushpin.png"></img>
-			</div>`
+			let content = `<img onClick="setPin('http://maps.google.com/mapfiles/ms/icons/red-pushpin.png')" id="red-pin" class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/red-pushpin.png"></img>
+				<img onClick="setPin('http://maps.google.com/mapfiles/ms/icons/ylw-pushpin.png')" id="yellow-pin" class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/ylw-pushpin.png"></img>
+				<img onClick="setPin('http://maps.google.com/mapfiles/ms/icons/grn-pushpin.png')" id="green-pin" class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/grn-pushpin.png"></img>
+				<img onClick="setPin('http://maps.google.com/mapfiles/ms/icons/ltblu-pushpin.png')"id="ltblu-pin" class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/ltblu-pushpin.png"></img>
+				<img onClick="setPin('http://maps.google.com/mapfiles/ms/icons/blue-pushpin.png')" id="blue-pin" class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/blue-pushpin.png"></img>
+				<img onClick="setPin('http://maps.google.com/mapfiles/ms/icons/purple-pushpin.png')" id="purple-pin" class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/purple-pushpin.png"></img>              
+				<img onClick="setPin('http://maps.google.com/mapfiles/ms/icons/pink-pushpin.png')" id="pink-pin" class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/pink-pushpin.png"></img>`
 			infoWindow.setContent(content);
 		}
 		
-		function addMarker(coords, price, title, url, color){
-		  let marker = new google.maps.Marker({position: coords, map: global_map, icon: {url: color} });
-		  markersArray.push(marker);
-		  
-		  let content = `<h3>${title}: ${price}$</h3> \n <a href=${url}>view listing<a> <img onClick="showPins()" id="init-pin" class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/red-pushpin.png">`;
-		  
-		 infoWindow = new google.maps.InfoWindow({ content: content });
+		function addMarker(coords, price, title, url, color, num){
+			let marker = new google.maps.Marker({position: coords, map: global_map, icon: {url: color} });
+			markersArray.push({pin: marker, id: num});
+			
+			let content = `<h3>${title}: ${price}$</h3> \n <a href=${url}>view listing<a> <img onClick="showPins()" id="init-pin" class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/red-pushpin.png">`;
+			infoWindow = new google.maps.InfoWindow({ content: content });
 
-		  marker.addListener('click', function(){
-			infoWindow.setContent(content);
-			infoWindow.open(map, marker);
+			marker.addListener('click', function(){
+				currentId = num;
+				infoWindow.setContent(content);
+				infoWindow.open(map, marker);
 		  });
 
 		}
