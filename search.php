@@ -45,7 +45,7 @@
 		
 		function clearPins() {
 			for (var i = 0; i < markersArray.length; i++ ) {
-				markersArray[i].pin.setMap(null);
+				if(markersArray[i].pinned == false) markersArray[i].pin.setMap(null);
 			}
 			markersArray.length = 0;
 		}
@@ -94,6 +94,7 @@
 			for (var i = 0; i < markersArray.length; i++ ) {
 				if(markersArray[i].id == currentId){
 					markersArray[i].pin.setIcon(color);
+					markersArray[i].pinned = true;
 				}
 			}
 		}
@@ -111,7 +112,7 @@
 		
 		function addMarker(coords, price, title, url, color, num){
 			let marker = new google.maps.Marker({position: coords, map: global_map, icon: {url: color} });
-			markersArray.push({pin: marker, id: num});
+			markersArray.push({pin: marker, id: num, pinned: false});
 			
 			let content = `<h3>${title}: ${price}$</h3> \n <a href=${url}>view listing<a> <img onClick="showPins()" id="init-pin" class="pin-option" src="http://maps.google.com/mapfiles/ms/icons/red-pushpin.png">`;
 			infoWindow = new google.maps.InfoWindow({ content: content });
