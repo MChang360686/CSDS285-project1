@@ -4,8 +4,9 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Each location stored as [lat,lon]:
-//$locations = [[46.86765753623418,-120.7675575752153]];
+include('config-loader.php');
+
+// Each location stored as [latitude,longitude]:
 $locations = [
     [43.8533,-120.9266], # Washington
     [46.767, -113.973], # West Montana
@@ -37,20 +38,25 @@ $locations = [
 
 $search_urls_file_txt = '';
 
+$lat_lon_args = '';
+
 foreach ($locations as $location){
+    $lat_lon_args .= $location[0] . ' ' . $location[1] . ' ';
+}
+
+$command = escapeshellcmd($python_path . ' get-locations-data.py ' . $lat_lon_args);
+$output = shell_exec($command);
+
+$responses = explode("|\n", $output);
+
+for ($i = 0; $i < count($locations); $i++){
+    $location = $locations[$i];
     $lat = $location[0];
     $lon = $location[1];
-    $url = 'https://rapi.craigslist.org/web/v8/locations?cc=US&lang=en&lat=' . $lat . '&lon=' . $lon;
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Host: rapi.craigslist.org', 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36']);
-    $json_str = curl_exec($ch);
-    curl_close($ch);
 
+    $json_str = $responses[$i];
     $location_response = json_decode($json_str);
     $location_response_main = $location_response->data->items[0];
-    //echo var_dump($location_response_main);
     $areaId = $location_response_main->areaId;
     $city = $location_response_main->city;
     $state = $location_response_main->region;

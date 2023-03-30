@@ -4,14 +4,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$config_ini = parse_ini_file('../config.ini');
-
-$python_path = $config_ini['python_path'];
-// This null check is fuzzy, and will say invalid if empty or doesn't exist:
-if ($python_path == NULL) {
-    echo 'CONFIG IS INVALID - Fix your "config.ini" file.';
-    exit();
-}
+include('config-loader.php');
 
 # Reads Category ID to Abbreviation map: (from https://stackoverflow.com/a/5164417)
 $category_id_to_abbreviation_map = json_decode(file_get_contents('category-id-to-abbreviation.json'), true);

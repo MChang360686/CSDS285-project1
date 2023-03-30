@@ -18,5 +18,5 @@ with open(os.devnull, "w") as devnull:
     sys.stdout = devnull
     results = rg.search(coordinates, mode=1)  # default mode = 2
 
-    sys.stdout = old_stdout
-    print(json.dumps(results))
+stringified_output = '|\n'.join(map(lambda x: x.text, response_list))
+print(stringified_output)
