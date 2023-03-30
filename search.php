@@ -30,16 +30,8 @@
 		
 		let global_map;
 		let markersArray = [];
-		let lowestPrice = 99999999999;
-		let highestPrice = 0;
-		let prices;
-		let minPrice;
-		let maxPrice;
 		
 		function clearPins() {
-			lowestPrice = 99999999999;
-			highestPrice = 0;
-			
 			for (var i = 0; i < markersArray.length; i++ ) {
 				markersArray[i].setMap(null);
 			}
@@ -52,7 +44,6 @@
 			}
 		});
 		$("#searchSubmitButton").click(submitSearch);
-		
 			
 		function submitSearch(e) {
 			clearPins();
@@ -60,11 +51,7 @@
 			console.log("Submitted search:", searchText);
 			$.post("backend/search.php?q=" + searchText, function(data, status) {
 				console.log("Result:", data, status);
-				
-				data.sort(function(a, b) {
-				  return a.price - b.price;
-				});
-				//
+				data.sort(function(a, b) { return a.price - b.price;});
 				for (let i = 0; i <= data.length; i ++) {
 					if(data[i].price <= 0) addMarker({lat: parseFloat(data[i].lat), lng: parseFloat(data[i].lon)}, data[i].price, data[i].title, data[i].url, 'http://labs.google.com/ridefinder/images/mm_20_white.png');
 					else if(i < data.length/3) addMarker({lat: parseFloat(data[i].lat), lng: parseFloat(data[i].lon)}, data[i].price, data[i].title, data[i].url, 'http://maps.google.com/mapfiles/ms/icons/green-dot.png');
@@ -83,19 +70,6 @@
 			document.getElementById('map'), {zoom: 4, center: {lat: 41.36444, lng: -98.31665}}
 		  );
 		}	
-			
-		
-		function generateColor(price){
-			let range = highestPrice-lowestPrice;
-			let interval = range/3;
-			
-			if(price < interval) return("http://maps.google.com/mapfiles/ms/icons/green-dot.png");
-			else if ((price > interval) && (price < interval * 2))  return("http://maps.google.com/mapfiles/ms/icons/yellow-dot.png");
-			else return("http://maps.google.com/mapfiles/ms/micons/red-dot.png");
-		}
-			
-			
-		
 		
 		function addMarker(coords, price, title, url, color){
 			let marker = new google.maps.Marker({position: coords, map: global_map, icon: {url: color} });
