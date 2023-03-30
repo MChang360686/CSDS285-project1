@@ -21,7 +21,15 @@ $locations_data = [];
 foreach ($per_location_response as $raw_location_response){
     $pulled_location_data = json_decode($raw_location_response);
 
-    $basePostingId = $pulled_location_data->data->decode->minPostingId;
+    $decode_obj = $pulled_location_data->data->decode;
+
+    # If the decode object is just the number 0, then that means there were no search results
+    #  (and it is 0 because there is nothing to decode):
+    if ($decode_obj === 0){
+        continue;
+    }
+
+    $basePostingId = $decode_obj->minPostingId;
     $pulled_items = $pulled_location_data->data->items;
 
     # Set the maximum items for this location bubble:
@@ -31,7 +39,7 @@ foreach ($per_location_response as $raw_location_response){
     # Note: If we were being perfect, then we would not cut off extras up front like we are currently here, as this may also lose some items in removing duplicates later. Optimally, we would pull new items over as needed to meet a target count.
     $pulled_items = array_slice($pulled_items, 0, $max_items_count);
 
-    $locations_decode_map = $pulled_location_data->data->decode->locations;
+    $locations_decode_map = $decode_obj->locations;
 
     foreach ($pulled_items as $item_pulled_data){
         $item_data = new stdClass();
