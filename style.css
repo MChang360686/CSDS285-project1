@@ -106,6 +106,15 @@ position: absolute;
   position: relative;
 }
 
+.pin-option {
+	width: 20px;
+	height: 20px;
+}
+
+#init-pin:hover {
+  cursor: pointer;
+}
+
 
 
 
