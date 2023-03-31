@@ -1,0 +1,218 @@
+//Items to add
+//Table stuff
+		function makeTableHead(table){
+			const headers = ["URL", "State", "Price", "Lat", "Lon", "Title"];
+			let thead = table.createTHead();
+			let row = thead.insertRow();
+			for (let head in headers) {
+				let th = document.createElement("th");
+				let text = document.createTextNode(headers[head]);
+				th.appendChild(text);
+				row.appendChild(th);
+			}
+		}
+
+	
+		function makeTable(table, data){
+			for (let item of data) {
+				let row = table.insertRow();
+				for (thing in item) {
+					let cell = row.insertCell();
+					let text = document.createTextNode(item[thing]);
+					cell.appendChild(text);
+				}
+			}
+		}
+
+		//clear existing table
+		function clearTable(){
+			var t = document.getElementById("letable");
+			t.innerHTML = "";
+		}
+
+		//Scrollbar JS
+		let sc = document.getElementById("data-table");
+		sc.onscroll = function() {myFunction()};
+
+		function myFunction() {
+  			var divScroll = document.getElementById("data-table").scrollTop || document.getElementById("data-table").scrollTop;
+  			var height = document.getElementById("data-table").scrollHeight - document.getElementById("data-table").clientHeight;
+			//Figure out how far we have scrolled and increment myBar appropriately
+  			var scrolled = (divScroll / height) * 100;
+  			document.getElementById("myBar").style.width = scrolled + "%";
+}
+
+
+//graphs
+<!--Chart JS section for Bar Chart-->
+		<br>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+		<!-- Bar chart goes here -->
+		<canvas id="chart1"></canvas>
+		<canvas id="chart2"></canvas>
+		<script>
+			//Bar chart of postings by price
+			function makeBarChartData(dataObject){
+				//create new empty array
+				const bcData = [];
+				
+				for(i=0;i<Object.keys(dataObject).length;i++) {
+					bcData.push(dataObject[i].price);
+				}
+				//console.log("bcData: " + bcData);
+				return bcData;
+			}
+
+			function makeBarChart(data){
+				var barchartValues = data;
+				const xValues = [];
+				const bcv = [];
+
+				//make array for xAxis
+				for(let i of barchartValues){
+					if(xValues.includes(i)){
+						
+					} else {
+						xValues.push(i);
+					}
+	
+				}
+
+				//pop off -1 (no price listed) bc it skews bar graph
+				xValues.shift();
+
+				//make bars by filtering for each item in xValues
+				for(i=0;i<xValues.length;i++){
+					bcv.push(barchartValues.filter((currentElement) => currentElement == xValues[i]).length);
+				}
+
+				//console.log("bcv " + bcv);
+				//console.log("barchartValues " + barchartValues);
+				//console.log("xValues " + xValues);
+
+				new Chart("chart1", {
+  					type: "bar",
+  						data: {
+    							labels: xValues,
+    							datasets: [{
+      							backgroundColor: '#203354',
+      							data: bcv
+    							}]
+  						},
+  						options: {
+    							legend: {display: false},
+    							title: {
+      							display: true,
+      							text: "Number of Listings by Price"
+    							},
+							y: {beginAtZero: true}
+  						}
+				});
+			}
+
+		</script>
+
+
+
+//CSS
+/* Basic Formatting */
+
+body {
+        font-family: Arial;
+}
+
+h1 {
+        font-family: Arial;
+}
+
+h4 {
+        font-family: Arial;
+}
+
+p {
+        font-family: Arial;
+}
+
+canvas {
+	  width: 100%;
+	  mad-width: 800px;
+}
+
+
+#header{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#map-key{
+position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 1;
+  background-color: #fff;
+  padding: 10px;
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+#search{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.key{
+	margin: 3px;
+	border: 1px solid black;
+	width: 150px;
+	padding: 3px;
+}
+
+#map {
+  width: 100%;
+  height: 500px;
+  border: 1px solid;
+}
+
+#map-container {
+  position: relative;
+}
+
+
+/*Table CSS*/
+#data-table {
+	width: 100%;
+	height: 200px;
+	overflow: auto;
+}
+
+/*Scrollbar CSS*/
+.header {
+  position: relative;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  background-color: #f1f1f1;
+}
+
+.progress-container {
+  width: 100%;
+  height: 8px;
+  background: #ccc;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #203354;
+  width: 0%;
+}
+
+.pin-option {
+	width: 20px;
+	height: 20px;
+}
+
+#init-pin:hover {
+  cursor: pointer;
+}
